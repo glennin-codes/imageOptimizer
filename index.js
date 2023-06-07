@@ -29,12 +29,13 @@ app.get('/resize', async (req, res) => {
       .resize(width, height)
       .toFormat(format)
       .toBuffer();
-      const { width: renderedWidth, height: renderedHeight } = await sharp(image).metadata();
-
-      console.log(`Rendered image size: ${renderedWidth}px x ${renderedHeight}px`);
-    
+     
     res.set('Content-Type', `image/${format}`);
     res.send(image);
+    const { width: renderedWidth, height: renderedHeight } = await sharp(image).metadata();
+
+    console.log(`Rendered image size: ${renderedWidth}px x ${renderedHeight}px`);
+  
     
    } catch (error) {
     console.error(` an error occured ${error}`);
