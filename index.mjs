@@ -1,7 +1,7 @@
-const express= require ('express')
-const sharp = require('sharp');
-const fs=require ('fs');
-const { log } = require('console');
+import express from 'express';
+import sharp from 'sharp';
+import { readFileSync } from 'fs';
+import { log } from 'console';
 
 
 const app=express();
@@ -43,7 +43,7 @@ app.get('/resize', async (req, res) => {
      
     res.set('Content-Type', `image/${format}`);
     res.send(image);
-    const originalSize=fs.readFileSync(filePath).byteLength
+    const originalSize=readFileSync(filePath).byteLength
 
  const fileSizeBytes=image.byteLength;
    const fileSizeInKB=fileSizeBytes / 1024;
