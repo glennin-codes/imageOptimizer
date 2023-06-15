@@ -1,5 +1,7 @@
 const express= require ('express')
 const sharp = require('sharp');
+const fs=require ('fs');
+const { log } = require('console');
 
 
 const app=express();
@@ -14,8 +16,13 @@ app.listen(port,()=>{
 
 app.get('/resize', async (req, res) => {
    try {
+  
     const { file } = req.query;
+    const filePath = file.split('?')[0];
+
     const width = parseInt(req.query.width);
+    const quality = parseInt(req.query.quality) || 80; // Set default quality to 80
+
     const height = parseInt(req.query.height);
     let format = req.query.format;
   
@@ -25,21 +32,32 @@ app.get('/resize', async (req, res) => {
       format = fileExtension === 'jpg' ? 'jpeg' : fileExtension;
     }
   
-    const image = await sharp(file)
-      .resize(width, height)
-      .toFormat(format)
+    const image = await sharp(filePath)
+    .resize(width, height,
+            {
+              crop:"inside"
+            }
+      )
+     .toFormat(format)
       .toBuffer();
      
     res.set('Content-Type', `image/${format}`);
     res.send(image);
-    const { width: renderedWidth, height: renderedHeight } = await sharp(image).metadata();
+    const originalSize=fs.readFileSync(filePath).byteLength
 
-    console.log(`Rendered image size: ${renderedWidth}px x ${renderedHeight}px`);
+ const fileSizeBytes=image.byteLength;
+   const fileSizeInKB=fileSizeBytes / 1024;
+   const fileSizeInMB=fileSizeInKB / 1024;
+    const { width: renderedWidth, height: renderedHeight } = await sharp(image).metadata();
+    console.log(`Rendered  Original image size: ${originalSize / 1024} KB  ${(originalSize / 1024) / 1024}MB`);
   
+    console.log(`Rendered final image size: ${fileSizeInKB} KB (${fileSizeInMB} MB)`);
+
+    
     
    } catch (error) {
     console.error(` an error occured ${error}`);
-    res.status(500).send('Error compressing image.');
+    
     
    }
   });
