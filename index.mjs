@@ -7,10 +7,12 @@ import fs from "fs"
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import multer from 'multer';
-
+import path from 'path'
 
 const app=express();
 const port=3000;
+app.use(express.static('public'));
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const upload=multer({dest:'uploads/'});
@@ -33,67 +35,52 @@ app.listen(port,()=>{
     console.log(`server is listening on http://localhost:${port}`);
 })
 
-app.post('/upload',upload.single('image'),  async (req, res) => {
-   try {
-  
-    const file  = req.file.path;
-   
-    log(file);
-    const width = parseInt(req.body.width);
-    const quality = parseInt(req.body.quality) || 80; // Set default quality to 80
 
+app.post('/upload', upload.single('image'), async (req, res) => {
+  try {
+    const file = req.file.path;
+    const width = parseInt(req.body.width);
+    const quality = parseInt(req.body.quality) || 80;
     const height = parseInt(req.body.height);
     let format = req.body.format;
-   // Read the file from the file system
-   const imageBuffer = fs.readFileSync(file);
 
-    // If format is not provided, detect it based on the file extension
     if (!format) {
-      const fileExtension = file.split('.').pop().toLowerCase();
+      const fileExtension = path.extname(file).toLowerCase().substring(1);
       format = fileExtension === 'jpg' ? 'jpeg' : fileExtension;
     }
     if (!height || !width) {
       throw new Error(`Please provide ${!height ? 'height' : 'width'}`);
     }
-    console.log(imageBuffer);
-  
-    const image = await sharp(imageBuffer)
-    .resize(width, height,{
 
-      fit: sharp.fit.inside,
-      withoutEnlargement: true
-    },
- 
-    
-      )
-     .toFormat(format,{ quality })
-      .toFile();
-      const outputImagePath = 'resized/' + image // Destination path for resized image
+    const outputImagePath = path.join(__dirname, 'public', `output.${format}`);
 
-  
-    const originalSize=readFileSync(file).byteLength
+    await sharp(file)
+      .resize(width, height, {
+        fit: sharp.fit.inside,
+        withoutEnlargement: true
+      })
+      .toFormat(format, { quality })
+      .toFile(outputImagePath);
 
- const fileSizeBytes=image.byteLength;
-   const fileSizeInKB=fileSizeBytes / 1024;
-   const fileSizeInMB=fileSizeInKB / 1024;
-    const { width: renderedWidth, height: renderedHeight } = await sharp(image).metadata();
-    console.log(`Rendered  Original image size: ${originalSize / 1024} KB  ${(originalSize / 1024) / 1024}MB`);
-  
-    console.log(`Rendered final image size: ${fileSizeInKB} KB (${fileSizeInMB} MB)`);
-  // res.set('Content-Type', `image/${format}`);
-    // Pass any relevant information to the rendered view
-    res.render('success', { imageUrl:outputImagePath,
-      message1:` Original image size was : ${originalSize / 1024} KB  ${(originalSize / 1024) / 1024}MB`,
-      message2:`Rendered final image size as: ${fileSizeInKB} KB (${fileSizeInMB} MB)`,
-  });
-    
-    
-   } catch (error) {
-    console.error(` an error occured ${error}`);
+    const originalSize = fs.statSync(file).size;
+    const resizedSize = fs.statSync(outputImagePath).size;
+
+    const fileSizeInKB = resizedSize / 1024;
+    const fileSizeInMB = fileSizeInKB / 1024;
+
+    const { width: renderedWidth, height: renderedHeight } = await sharp(outputImagePath).metadata();
+
+    res.render('success', {
+      imageUrl: outputImagePath,
+      message1: `Original image size: ${originalSize / 1024} KB (${(originalSize / 1024) / 1024} MB)`,
+      message2: `Rendered final image size: ${fileSizeInKB} KB (${fileSizeInMB} MB)`,
+    });
+    log('path',outputImagePath)
+  } catch (error) {
+    console.error(`An error occurred: ${error}`);
     res.status(404).send(error.message);
-    
-   }
-  });
+  }
+});
 
 
 
