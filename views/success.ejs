@@ -5,12 +5,11 @@
 </head>
 
   <h1>Image Uploaded and Resized!</h1>
-  <%if (imageUrl){
-
-    <img src="<% imageURl %>" alt="Resized Image" />
-    <p><%message1%></p>
-    <p><%message2%></p>
- 
-  }%>
+  <% if (imageUrl) { %>
+    <img src="<%= imageUrl %>" alt="Resized Image" />
+    <p><%= message1 %></p>
+    <p><%= message2 %></p>
+  <% } %>
+  
 </body>
 </html>
