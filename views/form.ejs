@@ -1,0 +1,84 @@
+<!-- form.ejs -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .upload-form {
+      background-color: #f9f9f9;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .upload-form input[type="file"],
+    .upload-form input[type="number"] {
+      display: block;
+      margin-bottom: 15px;
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    .upload-form select {
+      display: block;
+      margin-bottom: 15px;
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    .upload-form button {
+      background-color: #4caf50;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .upload-form button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Upload an Image</h1>
+    <p><%= message.message %></p>
+    <div class="upload-form">
+      <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="image" />
+        <input type="number" name="width" placeholder="Width" />
+        <input type="number" name="height" placeholder="Height" />
+        <input type="number" name="quality" placeholder="Quality (optional max=100)" />
+        <select name="format" placeholder="Quality (optional max=100)">
+          <% message.formats.forEach(format => { %>
+            <option value="<%= format %>"><%= format.toUpperCase() %></option>
+          <% }); %>
+        </select>
+        <button type="submit">Upload</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
