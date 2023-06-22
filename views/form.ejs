@@ -2,6 +2,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+  <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Upload Form</title>
   <style>
     body {
@@ -11,7 +15,7 @@
     }
 
     .container {
-      max-width: 600px;
+      max-width: 800px;
       margin: 0 auto;
     }
 
@@ -67,7 +71,7 @@
     <p><%= message.message %></p>
     <div class="upload-form">
       <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" multipe="true"   name="image" />
+        <input type="file"  name="images" />
         <input type="number" name="width" placeholder="Width" />
         <input type="number" name="height" placeholder="Height" />
         <input type="number" name="quality" placeholder="Quality (optional max=100)" />
