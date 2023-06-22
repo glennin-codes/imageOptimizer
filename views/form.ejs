@@ -67,7 +67,7 @@
     <p><%= message.message %></p>
     <div class="upload-form">
       <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="image" />
+        <input type="file" multipe="true"   name="image" />
         <input type="number" name="width" placeholder="Width" />
         <input type="number" name="height" placeholder="Height" />
         <input type="number" name="quality" placeholder="Quality (optional max=100)" />
