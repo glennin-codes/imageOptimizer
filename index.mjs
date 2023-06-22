@@ -47,7 +47,7 @@ app.listen(port,()=>{
 })
 
 
-app.post('/upload', upload.array('image',10), async (req, res) => {
+app.post('/upload', upload.single('image'), async (req, res) => {
   try {
     const file = req.file.path;
     const files = req.file;
