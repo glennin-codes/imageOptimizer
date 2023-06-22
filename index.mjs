@@ -45,7 +45,7 @@ log(message);
 app.listen(port,()=>{
     console.log(`server is listening on http://localhost:${port}`);
 })
- 
+
 
 app.post('/upload', upload.single('image'), async (req, res) => {
   try {
